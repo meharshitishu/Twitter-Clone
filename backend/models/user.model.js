@@ -1,5 +1,5 @@
 import mongoose, { mongo } from "mongoose";
-
+import Post from "./post.model.js"
 const userSchema=new mongoose.Schema({
     username:{
         type:String,
@@ -49,6 +49,10 @@ const userSchema=new mongoose.Schema({
     link:{
         type:String,
         default:""
+    },
+    likedPosts:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Post",
     }
 },{timestamps:true});
 
