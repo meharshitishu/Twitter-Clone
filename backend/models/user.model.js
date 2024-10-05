@@ -50,10 +50,13 @@ const userSchema=new mongoose.Schema({
         type:String,
         default:""
     },
-    likedPosts:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Post",
-    }
+    likedPosts:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Post",
+            default:[]
+        }
+    ]
 },{timestamps:true});
 
 const User=mongoose.model("User",userSchema);

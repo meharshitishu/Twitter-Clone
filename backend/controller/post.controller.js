@@ -92,7 +92,7 @@ export const commentOnPost = async (req,res)=>{
 export const likeUnlikePost=async(req,res)=>{
     try {
         const userId=req.user._id;
-        const postId=req.params.id;
+        const {id:postId}=req.params;
         const post=await Post.findById(postId);
         if(!post){
             return res.status(404).json({error:"Post not found"});
@@ -107,6 +107,7 @@ export const likeUnlikePost=async(req,res)=>{
             post.likes.push(userId);
             await User.updateOne({_id:userId},{$push:{likedPosts:postId}});
             await post.save();
+            console.log(post.likes)
             const notification=new Notification({
                 from:userId,
                 to:post.user,
