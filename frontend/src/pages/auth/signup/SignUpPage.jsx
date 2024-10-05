@@ -7,7 +7,7 @@ import { MdOutlineMail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 const SignUpPage = () => {
@@ -17,28 +17,29 @@ const SignUpPage = () => {
 		fullName: "",
 		password: "",
 	});
+	const queryClient = useQueryClient();
 
-	const {mutate,isError,isPending,error}=useMutation({
-		mutationFn:async({email,username,fullName,password})=>{
+	const { mutate, isError, isPending, error } = useMutation({
+		mutationFn: async ({ email, username, fullName, password }) => {
 			try {
-				const res=await fetch("/api/auth/signup",{
-					method:"POST",
-					headers:{
-						"Content-Type":"application/json"
+				const res = await fetch("/api/auth/signup", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
 					},
-					body:JSON.stringify({email,username,fullName,password})
+					body: JSON.stringify({ email, username, fullName, password })
 				});
-				
-				const data=await res.json();
-				if(!res.ok)throw new Error(data.error || "Failed to create account");
+
+				const data = await res.json();
+				if (!res.ok) throw new Error(data.error || "Failed to create account");
 				console.log(data);
 				return data;
 			} catch (error) {
 				console.log(error);
-				throw error;
+				throw new error(error);
 			}
 		},
-		onSuccess:()=>{
+		onSuccess: () => {
 			toast.success("Account created successfully");
 			queryClient.invalidateQueries({ queryKey: ["authUser"] });
 		}
@@ -108,9 +109,11 @@ const SignUpPage = () => {
 							value={formData.password}
 						/>
 					</label>
+
 					<button className='btn rounded-full btn-primary text-white'>
 						{isPending ? "Loading..." : "Sign up"}
 					</button>
+
 					{isError && <p className='text-red-500'>{error.message}</p>}
 				</form>
 				<div className='flex flex-col lg:w-2/3 gap-2 mt-4'>
